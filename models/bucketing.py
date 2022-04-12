@@ -29,3 +29,32 @@ class StateBucketing(TransformerMixin):
                     on=[self.case_id_col], how="left").fillna(0)
         X = X[X.event_nr <= X.state]
         return X
+
+
+class TimeBucketing(TransformerMixin):
+    def __init__(self,
+                 timediff,
+                 unit,
+                 deadline = None,
+                 deadline_col = None,
+                 timestamp_col='time:timestamp'
+                 ):
+        self.timediff = timediff
+        self.unit = unit
+        self.deadline = deadline
+        self.deadline_col = deadline_col
+        self.timestamp_col = timestamp_col
+
+    def fit(self, X, y=None):
+        return self
+
+    def transform(self, X):
+        if self.deadline is not None:
+            X["deadline"] = pd.to_datetime(self.deadline) - pd.to_timedelta(self.timediff, unit=self.unit)
+            X = X[X.self.timestamp_col <= X.deadline].drop(columns=["deadline"])
+            return X
+        elif self.deadline_col is not None:
+            X["deadline"] = X[self.deadline_col] - pd.to_timedelta(self.timediff, unit=self.unit)
+            X = X[X.self.timestamp_col <= X.deadline].drop(columsns=["deadline"])
+            return X
+        else: raise RuntimeError('No deadline specified!')
