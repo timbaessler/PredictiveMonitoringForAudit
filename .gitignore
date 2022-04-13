@@ -9,6 +9,12 @@ __pycache__/
 # Google Drive
 desktop.ini
 
+# Tests & Experiments
+2022*.py
+*.ipynb
+test*.py
+
+
 # Distribution / packaging
 .Python
 build/
