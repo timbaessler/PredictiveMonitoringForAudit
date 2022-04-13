@@ -6,6 +6,9 @@ __pycache__/
 # C extensions
 *.so
 
+# Google Drive
+desktop.ini
+
 # Distribution / packaging
 .Python
 build/
