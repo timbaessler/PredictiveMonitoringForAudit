@@ -6,9 +6,19 @@ __pycache__/
 # C extensions
 *.so
 
+# Google Drive
+desktop.ini
+
+# Tests & Experiments
+2022*.py
+*.ipynb
+test*.py
+
+
 # Distribution / packaging
 .Python
 build/
+data/
 develop-eggs/
 dist/
 downloads/
