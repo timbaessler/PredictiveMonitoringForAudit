@@ -30,7 +30,7 @@ def label_log(log, case_id_col="case:concept:name", activity_col="concept:name",
                     clear_pos_1 = i + 1
                 if invoice_count < 0 and clear_count>0:
                     label_dict[case_id] = 1
-                    pos_dict[case_id] = clear_pos_1
+                    pos_dict[case_id] = i + 1
                     conformance = False
                     violations_counter += 1
                     continue
@@ -51,7 +51,8 @@ def label_log(log, case_id_col="case:concept:name", activity_col="concept:name",
 if __name__ == "__main__":
     bpi_path = bpi_dict["bpi_path"]
     processed_path = bpi_dict["processed_path"]
-    log = read_xes(os.path.join(bpi_path, "raw", 'BPI_Challenge_2019.xes'))
+    log = pd.read_feather(os.path.join(bpi_path, "raw", "bpi.feather"))
+    #log = read_xes(os.path.join(bpi_path, "raw", 'BPI_Challenge_2019.xes'))
     log = timefilter_start(log, "2018-01-01 00:00:00")
     log = filter_by_min_activity(log, 'Clear Invoice', 1)
     log = log[log["case:Item Category"] == "3-way match, invoice before GR"]
@@ -64,4 +65,4 @@ if __name__ == "__main__":
     log = get_total_duration(log)
     log = get_remaining_time(log)
     log = get_seq_length(log)
-    #log.reset_index(drop=True).to_feather(os.path.join(processed_path, 'bpic_2019_labelled.feather'))
+    log.reset_index(drop=True).to_feather(os.path.join(processed_path, 'bpic_2019_labelled.feather'))

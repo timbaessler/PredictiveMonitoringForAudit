@@ -2,7 +2,6 @@ import numpy as np
 import sklearn.metrics as metrics
 import matplotlib.pyplot as plt
 
-
 class ThreshholdOptimizer:
     def __init__(self, r, p):
         self.r = r

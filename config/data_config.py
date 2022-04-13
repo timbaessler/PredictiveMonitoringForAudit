@@ -9,10 +9,11 @@ else:
     raise RuntimeError
 
 bpic_2018_dict = dict({'bpi_path' : os.path.join(path, 'data', 'BPIC2018'),
-                       'processed_path': os.path.join(path, 'data', 'BPIC2018', 'processed_path'),
+                       'processed_path': os.path.join(path, 'data', 'BPIC2018', 'processed'),
                        'predict_path': os.path.join(path, 'data', 'BPIC2018', 'predictions'),
                        'labelled_log_path': os.path.join(path, 'data', 'BPIC2018', 'processed',
                                                          'bpic2018_labelled.feather'),
+                       'res_path': os.path.join(path, 'data', 'BPIC2018', 'results'),
                        'static_cat_cols': list(['case:young farmer','case:penalty_AJLP','case:small farmer',
                                                 'case:penalty_BGP', 'case:department', 'case:penalty_C16',
                                                 'case:penalty_BGK', 'case:penalty_AVUVP', 'case:penalty_CC',
@@ -33,10 +34,11 @@ bpic_2018_dict = dict({'bpi_path' : os.path.join(path, 'data', 'BPIC2018'),
                                          'case:area'])})
 
 bpic_2019_dict = dict({'bpi_path' : os.path.join(path, 'data', 'BPIC2019'),
-                       'processed_path': os.path.join(path, 'data', 'BPIC2019', 'processed_path'),
+                       'processed_path': os.path.join(path, 'data', 'BPIC2019', 'processed'),
                        'predict_path': os.path.join(path, 'data', 'BPIC2019', 'predictions'),
                        'labelled_log_path': os.path.join(path, 'data', 'BPIC2019', 'processed',
                                                          'bpic_2019_labelled.feather'),
+                       'res_path': os.path.join(path, 'data', 'BPIC2019', 'results'),
                        'static_cat_cols': list(['case:Spend area text', 'case:Company',
                                                 'case:Document Type', 'case:Sub spend area text',
                                                 #'case:Vendor',
