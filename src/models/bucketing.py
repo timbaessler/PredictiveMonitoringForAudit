@@ -34,7 +34,8 @@ class StateBucketing(TransformerMixin):
 class TimeBucketing(TransformerMixin):
     def __init__(self,
                  timediff,
-                 unit,
+                 end_of_year=False,
+                 unit = None,
                  deadline = None,
                  deadline_col = None,
                  timestamp_col='time:timestamp'
@@ -43,6 +44,7 @@ class TimeBucketing(TransformerMixin):
         self.unit = unit
         self.deadline = deadline
         self.deadline_col = deadline_col
+        self.end_of_year = end_of_year
         self.timestamp_col = timestamp_col
 
     def fit(self, X, y=None):
@@ -51,10 +53,12 @@ class TimeBucketing(TransformerMixin):
     def transform(self, X):
         if self.deadline is not None:
             X["deadline"] = pd.to_datetime(self.deadline) - pd.to_timedelta(self.timediff, unit=self.unit)
-            X = X[X.self.timestamp_col <= X.deadline].drop(columns=["deadline"])
-            return X
+            return X[X.self.timestamp_col <= X.deadline].drop(columns=["deadline"])
         elif self.deadline_col is not None:
             X["deadline"] = X[self.deadline_col] - pd.to_timedelta(self.timediff, unit=self.unit)
-            X = X[X.self.timestamp_col <= X.deadline].drop(columsns=["deadline"])
-            return X
-        else: raise RuntimeError('No deadline specified!')
+            return X[X.self.timestamp_col <= X.deadline].drop(columns=["deadline"])
+        elif self.end_of_year:
+            X["deadline"] = X[self.timestamp_col].dt.dayofyear
+            return X[X.deadline <= 365-self.timediff].drop(columns=["deadline"])
+        else:
+            raise RuntimeError('No deadline specified!')

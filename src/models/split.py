@@ -1,7 +1,5 @@
 from sklearn.model_selection import train_test_split
 
-
-
 def temporal_train_split(X, test_size,
                          return_cases=True,
                          case_id_col='case:concept:name',
@@ -18,5 +16,3 @@ def temporal_train_split(X, test_size,
         return train_idx, test_idx
     else:
         return[i for i in range(len(train_idx))], [j for j in range(len(train_idx), len(train_idx)+len(test_idx))]
-
-

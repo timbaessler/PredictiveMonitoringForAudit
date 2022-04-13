@@ -1,7 +1,11 @@
-from utils import *
 import os
-
-
+import sys
+import warnings
+import pandas as pd
+warnings.filterwarnings('ignore')
+sys.path.append('..')
+from src.preprocessing.utils import *
+from config.data_config import bpic_2018_dict as bpi_dict
 
 def check_late_payment(log, case_id_col="case:concept:name", event_col="concept:name"):
     pos_dict = dict()
@@ -36,9 +40,9 @@ def check_late_payment(log, case_id_col="case:concept:name", event_col="concept:
 
 
 if __name__ == "__main__":
-    bpi_path = '<BPIC 2018 path>'
-    processed_path = '<labeled log path>'
-    log = read_xes(os.path.join(bpi_path, 'BPI Challenge 2018.xes'))
+    bpi_path = bpi_dict["bpi_path"]
+    processed_path = bpi_dict["processed_path"]
+    log = read_xes(os.path.join(bpi_path, "raw",  "BPI Challenge 2018.xes"))
     log = log[log.doctype=="Payment application"]
     log = get_time_attributes(log)
     log["case:concept:name"] = log["case:concept:name"] + log["case:year"].astype(str)
@@ -52,4 +56,4 @@ if __name__ == "__main__":
     log = get_total_duration(log)
     log = check_late_payment(log)
     log = get_seq_length(log).reset_index(drop=True)
-    log.to_feather(os.path.join(processed_path, 'bpic2018_labelled.feather'))
+    #log.to_feather(os.path.join(processed_path, 'bpic2018_labelled.feather'))

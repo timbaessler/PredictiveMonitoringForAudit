@@ -4,8 +4,8 @@ import numpy as np
 
 class Aggregation(TransformerMixin):
     def __init__(self, num_cols,  static_cat_cols, dynamic_cat_cols, one_hot_static=True,
-                 case_id_col='case:concept:name', activity_col='concept:name',
-                 timestamp_col='time:timestamp'):
+                 case_id_col="case:concept:name", activity_col="concept:name",
+                 timestamp_col="time:timestamp"):
 
         self.num_cols = num_cols
         self.static_cat_cols = static_cat_cols

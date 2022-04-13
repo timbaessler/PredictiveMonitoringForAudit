@@ -1,31 +1,31 @@
 import os
+import sys
 import pickle
 import glob
-from cv_models import CrossValidation
-from utils import *
-from bucketing import *
-from encoding import *
-from optim import *
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import sklearn.metrics as metrics
+import warnings
+warnings.filterwarnings('ignore')
+sys.path.append('..')
+from src.models.cv_models import CrossValidation
+from src.models.encoding import Aggregation
+from src.models.bucketing import StateBucketing
+from src.models.optim import ThreshholdOptimizer
+from src.models.split import temporal_train_split
+from config.data_config import bpic_2019_dict as bpi_dict
+from config.model_config import param_dict
+
 
 if __name__ == "__main__":
-    processed_path = os.path.join('<labeled log path>')
-    predict_path = os.path.join('<results path>')
-    log = pd.read_feather(os.path.join(processed_path, 'bpic_2019_labelled.feather'))
+    predict_path = bpi_dict["predict_path"]
+    log = pd.read_feather(bpi_dict["labelled_log_path"])
     train_idx, test_idx = temporal_train_split(log, test_size=0.33)
-
-    static_cat_cols = list(['case:Spend area text', 'case:Company',
-                            'case:Document Type', 'case:Sub spend area text',
-                            'case:Item Type', 'case:Item Category',
-                            'case:Spend classification text',
-                            'case:GR-Based Inv. Verif.', 'case:Goods Receipt',
-                            ])
-
-    dynamic_cat_cols = list(['org:resource', 'concept:name'])
-    num_cols = list(['Cumulative net worth (EUR)', 'year', 'month', 'weekday', 'hour',
-                     'time_since_first_event',
-                     'time_since_last_event'])
+    static_cat_cols = bpi_dict["static_cat_cols"]
+    dynamic_cat_cols = bpi_dict["dynamic_cat_cols"]
+    num_cols = bpi_dict["num_cols"]
     res = pd.DataFrame()
-
     for classifier in list(["XGBoost", "RandomForest"]):
         for state in list(["Clear Invoice",
                            "Record Invoice Receipt",
@@ -33,8 +33,8 @@ if __name__ == "__main__":
                            "Create Purchase Order Item"
                            ]):
             fname = os.path.join(predict_path, classifier + state+ "_")
-            if os.path.exists(fname + ".sav"):
-                continue
+            #if os.path.exists(fname + ".sav"):
+                #continue
             state_extractor = StateBucketing(state)
             log2 = state_extractor.fit_transform(log)
             onehot =  True
@@ -46,7 +46,7 @@ if __name__ == "__main__":
             X_test = X[X.index.isin(test_idx)].values
             y_test = y[y.index.isin(test_idx)].values
             del X
-            crossval = CrossValidation(classifier)
+            crossval = CrossValidation(classifier, param_dict[classifier])
             clf = crossval.get_classifier()
             clf.fit(X_train, y_train)
             pickle.dump(clf, open(fname + ".sav", 'wb'))

@@ -1,5 +1,11 @@
 import os
-from utils import *
+import sys
+import warnings
+import pandas as pd
+warnings.filterwarnings('ignore')
+sys.path.append('..')
+from src.preprocessing.utils import *
+from config.data_config import bpic_2019_dict as bpi_dict
 
 
 def label_log(log, case_id_col="case:concept:name", activity_col="concept:name", timestamp_col="time:timestamp"):
@@ -43,9 +49,9 @@ def label_log(log, case_id_col="case:concept:name", activity_col="concept:name",
 
 
 if __name__ == "__main__":
-    bpi_path = '<BPIC 2019 path>'
-    processed_path = '<labeled log path>'
-    log = read_xes(os.path.join(bpi_path, 'BPI_Challenge_2019.xes'))
+    bpi_path = bpi_dict["bpi_path"]
+    processed_path = bpi_dict["processed_path"]
+    log = read_xes(os.path.join(bpi_path, "raw", 'BPI_Challenge_2019.xes'))
     log = timefilter_start(log, "2018-01-01 00:00:00")
     log = filter_by_min_activity(log, 'Clear Invoice', 1)
     log = log[log["case:Item Category"] == "3-way match, invoice before GR"]
@@ -58,4 +64,4 @@ if __name__ == "__main__":
     log = get_total_duration(log)
     log = get_remaining_time(log)
     log = get_seq_length(log)
-    log.reset_index(drop=True).to_feather(os.path.join(processed_path, 'bpic_2019_labelled.feather'))
+    #log.reset_index(drop=True).to_feather(os.path.join(processed_path, 'bpic_2019_labelled.feather'))
