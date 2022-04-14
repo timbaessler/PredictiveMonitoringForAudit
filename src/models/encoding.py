@@ -2,6 +2,7 @@ import pandas as pd
 from sklearn.base import TransformerMixin
 import numpy as np
 
+
 class Aggregation(TransformerMixin):
     def __init__(self, num_cols,  static_cat_cols, dynamic_cat_cols, one_hot_static=True,
                  case_id_col="case:concept:name", activity_col="concept:name",

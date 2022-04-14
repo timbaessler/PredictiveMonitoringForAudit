@@ -1,6 +1,6 @@
 from sklearn.base import TransformerMixin
 import pandas as pd
-
+from pandas.tseries.offsets import BusinessDay
 
 class StateBucketing(TransformerMixin):
     def __init__(self, state, case_id_col='case:concept:name',
@@ -33,32 +33,17 @@ class StateBucketing(TransformerMixin):
 
 class TimeBucketing(TransformerMixin):
     def __init__(self,
-                 timediff,
-                 end_of_year=False,
-                 unit = None,
-                 deadline = None,
+                 offset,
                  deadline_col = None,
                  timestamp_col='time:timestamp'
                  ):
-        self.timediff = timediff
-        self.unit = unit
-        self.deadline = deadline
+        self.offset = offset
         self.deadline_col = deadline_col
-        self.end_of_year = end_of_year
         self.timestamp_col = timestamp_col
 
     def fit(self, X, y=None):
         return self
 
     def transform(self, X):
-        if self.deadline is not None:
-            X["deadline"] = pd.to_datetime(self.deadline) - pd.to_timedelta(self.timediff, unit=self.unit)
-            return X[X.self.timestamp_col <= X.deadline].drop(columns=["deadline"])
-        elif self.deadline_col is not None:
-            X["deadline"] = X[self.deadline_col] - pd.to_timedelta(self.timediff, unit=self.unit)
-            return X[X.self.timestamp_col <= X.deadline].drop(columns=["deadline"])
-        elif self.end_of_year:
-            X["deadline"] = X[self.timestamp_col].dt.dayofyear
-            return X[X.deadline <= 365-self.timediff].drop(columns=["deadline"])
-        else:
-            raise RuntimeError('No deadline specified!')
+        X["deadline_minus_bday"] = X[self.deadline_col] - BusinessDay(self.offset)
+        return X[X.self.timestamp_col <= X.deadline].drop(columns=["deadline_minus_bday"])
