@@ -5,7 +5,7 @@ from sys import platform
 
 class CrossValidation:
 
-    def __init__(self, classifier: str, param_dict: dict, random_state=42):
+    def __init__(self, classifier: str, param_dict: dict, cvs=3, random_state=42):
         self.classifier = classifier
         self.param_dict = param_dict
         if platform == "linux":
@@ -13,6 +13,7 @@ class CrossValidation:
         else:
             self.gpu = False
         self.random_state = random_state
+        self.cvs = cvs
 
     def get_classifier(self):
         if self.classifier == "XGBoost":
@@ -24,7 +25,7 @@ class CrossValidation:
                                    scoring='roc_auc',
                                    refit=True,
                                    n_jobs=-1,
-                                   cv=3,
+                                   cv=self.cvs,
                                    verbose=10)
             else:
                 clf = GridSearchCV(XGBClassifier(random_state=self.random_state,
@@ -32,14 +33,14 @@ class CrossValidation:
                                    param_grid=self.param_dict,
                                    scoring='roc_auc',
                                    refit=True,
-                                   cv=3,
+                                   cv=self.cvs,
                                    verbose=10)
 
         elif self.classifier == "RandomForest":
             clf = GridSearchCV(RandomForestClassifier(random_state=42),
                        param_grid=self.param_dict,
                        refit=True,
-                       cv=3,
+                       cv=self.cvs,
                        verbose=10,
                        n_jobs=-1,
                        scoring='roc_auc')

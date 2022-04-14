@@ -30,12 +30,12 @@ if __name__ == "__main__":
     dynamic_cat_cols = bpi_dict["dynamic_cat_cols"]
     num_cols = bpi_dict["num_cols"]
     res = pd.DataFrame()
-    for classifier in list(["XGBoost", "RandomForest"]):
-        for pr in range(32):
+    for classifier in list(["XGBoost"]):
+        for pr in range(16):
             fname = os.path.join(predict_path, classifier +str(pr).zfill(2)+ "_")
             if os.path.exists(fname + ".sav"):
                continue
-            bucketer = TimeBucketing(timediff=pr, end_of_year=True)
+            bucketer = TimeBucketing(offset=pr, deadline_col="deadline")
             log2 = bucketer.fit_transform(log)
             agg_transformer = Aggregation(num_cols,
                                           static_cat_cols,
@@ -55,7 +55,10 @@ if __name__ == "__main__":
             X_test = X[X.index.isin(test_idx)].values
             y_test = y[y.index.isin(test_idx)].values
             del X
-            crossval = CrossValidation(classifier, param_dict[classifier])
+            crossval = CrossValidation(classifier=classifier,
+                                       param_dict=param_dict[classifier],
+                                       cvs=cvs
+                                       )
             clf = crossval.get_classifier()
             clf.fit(X_train, y_train)
             pickle.dump(clf, open(fname + ".sav", 'wb'))

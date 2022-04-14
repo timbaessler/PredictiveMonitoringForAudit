@@ -46,4 +46,4 @@ class TimeBucketing(TransformerMixin):
 
     def transform(self, X):
         X["deadline_minus_bday"] = X[self.deadline_col] - BusinessDay(self.offset)
-        return X[X.self.timestamp_col <= X.deadline].drop(columns=["deadline_minus_bday"])
+        return X[X[self.timestamp_col] <= X["deadline_minus_bday"]].drop(columns=["deadline_minus_bday"])
