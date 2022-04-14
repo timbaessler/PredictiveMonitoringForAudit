@@ -2,6 +2,7 @@ import os
 import sys
 import warnings
 import pandas as pd
+import numpy as np
 warnings.filterwarnings('ignore')
 sys.path.append('..')
 from src.preprocessing.utils import *
@@ -48,11 +49,17 @@ def label_log(log, case_id_col="case:concept:name", activity_col="concept:name",
     return log
 
 
+
+
+
 if __name__ == "__main__":
     bpi_path = bpi_dict["bpi_path"]
     processed_path = bpi_dict["processed_path"]
-    log = pd.read_feather(os.path.join(bpi_path, "raw", "bpi.feather"))
-    #log = read_xes(os.path.join(bpi_path, "raw", 'BPI_Challenge_2019.xes'))
+    if os.path.exists(os.path.join(bpi_path, "raw", "bpi.feather")):
+        log = pd.read_feather(os.path.join(bpi_path, "raw", "bpi.feather"))
+    else:
+        log = read_xes(os.path.join(bpi_path, "raw", 'BPI_Challenge_2019.xes'))
+        log.to_feather(os.path.join(bpi_path, "raw", "bpi.feather"))
     log = timefilter_start(log, "2018-01-01 00:00:00")
     log = filter_by_min_activity(log, 'Clear Invoice', 1)
     log = log[log["case:Item Category"] == "3-way match, invoice before GR"]
