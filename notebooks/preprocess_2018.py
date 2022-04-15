@@ -40,10 +40,6 @@ def check_late_payment(log, case_id_col="case:concept:name", event_col="concept:
     return log
 
 
-
-
-
-
 if __name__ == "__main__":
     bpi_path = bpi_dict["bpi_path"]
     processed_path = bpi_dict["processed_path"]

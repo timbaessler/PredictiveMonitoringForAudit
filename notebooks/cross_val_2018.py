@@ -7,6 +7,7 @@ import glob
 import sys
 import os
 import warnings
+import matplotlib.pyplot as plt
 warnings.filterwarnings('ignore')
 sys.path.append('..')
 from src.models.cv_models import CrossValidation
@@ -68,10 +69,14 @@ if __name__ == "__main__":
             y_pred_proba_train = clf.predict_proba(X_train)[:, 1]
             auc = metrics.roc_auc_score(y_test, y_pred_proba)
             auc = np.round(auc, 5)
-
-            opt = ThreshholdOptimizer(r=2, p=1)
+            np.save(fname + "y_pred_proba_train.npy", y_pred_proba_train)
+            np.save(fname +"y_train.npy", y_train)
+            np.save(fname + "y_pred_proba_test.npy", y_pred_proba)
+            np.save(fname + "y_test.npy", y_test)
+            opt = ThreshholdOptimizer(r=1, p=2)
             opt.fit(y_true=y_train, y_pred_proba=y_pred_proba_train)
             opt.plot_threshold()
+            plt.savefig(fname+"_thresh.png", dpi=500)
             y_pred_proba_opt = opt.predict(y_pred_proba)
             results_df = pd.DataFrame(clf.cv_results_)
             results_df = results_df.sort_values(by=["rank_test_score"])

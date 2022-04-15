@@ -37,7 +37,7 @@ def label_log(log, case_id_col="case:concept:name", activity_col="concept:name",
                     continue
             if i == len(events)-1 and conformance:
                 label_dict[case_id] = 0
-                pos_dict[case_id] = clear_pos_1
+                pos_dict[case_id] = len(events)
     print(str(violations_counter)+' violations '
           +str(round((violations_counter/case_counter)*100, 2))+" % of all cases")
     log = log.merge(pd.DataFrame({case_id_col: label_dict.keys(),

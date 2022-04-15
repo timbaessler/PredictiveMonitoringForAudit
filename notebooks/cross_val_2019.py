@@ -16,7 +16,10 @@ from src.models.optim import ThreshholdOptimizer
 from src.models.split import temporal_train_split
 from config.data_config import bpic_2019_dict as bpi_dict
 from config.model_config import param_dict
-
+desired_width = 200
+pd.set_option('display.width', desired_width)
+pd.set_option("display.max_rows", 40)
+pd.set_option("display.max_columns", 20)
 
 if __name__ == "__main__":
     predict_path = bpi_dict["predict_path"]
@@ -26,15 +29,15 @@ if __name__ == "__main__":
     dynamic_cat_cols = bpi_dict["dynamic_cat_cols"]
     num_cols = bpi_dict["num_cols"]
     res = pd.DataFrame()
-    for classifier in list(["XGBoost", "RandomForest"]):
+    for classifier in list(["RandomForest"]):
         for state in list(["Clear Invoice",
                            "Record Invoice Receipt",
                            "Record Goods Receipt",
                            "Create Purchase Order Item"
                            ]):
             fname = os.path.join(predict_path, classifier + state+ "_")
-            #if os.path.exists(fname + ".sav"):
-                #continue
+            if os.path.exists(fname + ".sav"):
+                continue
             state_extractor = StateBucketing(state)
             log2 = state_extractor.fit_transform(log)
             onehot =  True
@@ -55,6 +58,10 @@ if __name__ == "__main__":
             y_pred_proba_train = clf.predict_proba(X_train)[:, 1]
             auc = metrics.roc_auc_score(y_test, y_pred_proba)
             auc = np.round(auc, 5)
+            np.save(fname + "y_pred_proba_train.npy", y_pred_proba_train)
+            np.save(fname +"y_train.npy", y_train)
+            np.save(fname + "y_pred_proba_test.npy", y_pred_proba)
+            np.save(fname + "y_test.npy", y_test)
             opt = ThreshholdOptimizer(r=2, p=1)
             opt.fit(y_true=y_train, y_pred_proba=y_pred_proba_train)
             opt.plot_threshold()
@@ -64,7 +71,6 @@ if __name__ == "__main__":
             results_df = pd.DataFrame(clf.cv_results_)
             results_df = results_df.sort_values(by=["rank_test_score"])
             results_df.to_csv(fname + 'cross_val_scores.csv', index=False, sep=";")
-
             res = pd.DataFrame({
                 "Classifier": classifier,
                 "State": state,

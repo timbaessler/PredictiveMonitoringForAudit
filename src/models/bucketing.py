@@ -19,7 +19,6 @@ class StateBucketing(TransformerMixin):
         state_dict = dict()
         for case_id, vals in X.groupby([self.case_id_col]):
             events = vals[self.activity_col].tolist()
-
             for i, event in enumerate(events):
                 if event == self.state:
                     state_dict[case_id] = i+1
