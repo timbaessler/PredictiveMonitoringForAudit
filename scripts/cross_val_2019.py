@@ -29,12 +29,13 @@ if __name__ == "__main__":
     dynamic_cat_cols = bpi_dict["dynamic_cat_cols"]
     num_cols = bpi_dict["num_cols"]
     res = pd.DataFrame()
-    for classifier in list(["RandomForest"]):
+    for classifier in list(["XGBoost"]):
         for state in list(["Clear Invoice",
                            "Record Invoice Receipt",
                            "Record Goods Receipt",
                            "Create Purchase Order Item"
                            ]):
+            print(state)
             fname = os.path.join(predict_path, classifier + state+ "_")
             if os.path.exists(fname + ".sav"):
                 continue
@@ -58,6 +59,7 @@ if __name__ == "__main__":
             y_pred_proba_train = clf.predict_proba(X_train)[:, 1]
             auc = metrics.roc_auc_score(y_test, y_pred_proba)
             auc = np.round(auc, 5)
+            print(auc)
             np.save(fname + "y_pred_proba_train.npy", y_pred_proba_train)
             np.save(fname +"y_train.npy", y_train)
             np.save(fname + "y_pred_proba_test.npy", y_pred_proba)
