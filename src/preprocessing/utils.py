@@ -1,3 +1,4 @@
+import numpy as np
 import pandas as pd
 from pm4py.algo.filtering.pandas.timestamp import timestamp_filter
 from pm4py.objects.log.importer.xes import importer as xes_importer
@@ -99,6 +100,25 @@ def get_remaining_time(log: pd.DataFrame, case_id_col='case:concept:name',
         log = get_event_duration(log, case_id_col=case_id_col, timestamp_col=timestamp_col)
     log["remaining_time"] = (log[::-1].groupby(case_id_col)["duration"].cumsum().fillna(0)).astype(float)
     log["remaining_time"] = log["remaining_time"] / 24
+    return log
+
+
+def get_remaining_bus_days(log: pd.DataFrame, case_id_col='case:concept:name',
+                       timestamp_col='time:timestamp'):
+    if not "duration" in log.columns.tolist():
+        log = get_event_duration(log, case_id_col=case_id_col, timestamp_col=timestamp_col)
+    log["remaining_time"] = (log[::-1].groupby(case_id_col)["duration"].cumsum().fillna(0)).astype(float)
+    log["remaining_time"] = log["remaining_time"] / 24
+    log2 = log.groupby(case_id_col)[timestamp_col].last()\
+        .reset_index(drop=False)\
+        .rename(columns={timestamp_col: "end_timestamp"})
+    log = log.merge(log2, on=[case_id_col], how="left")
+    log["days_count"] = (log["end_timestamp"] - log["time:timestamp"]).dt.days
+    log["bus_days_between"] = np.busday_count([d.date() for d in log["time:timestamp"]],
+                                               [d.date() for d in log["end_timestamp"]])
+    log["holidays"] = log["days_count"] - log["bus_days_between"]
+    log["remaining bus. hours / 24"] = log["remaining_time"] - log["holidays"]
+    print(log)
     return log
 
 

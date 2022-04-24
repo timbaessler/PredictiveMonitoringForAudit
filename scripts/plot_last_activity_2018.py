@@ -24,7 +24,10 @@ if __name__ == "__main__":
                                                  [d.date() for d in log["time:timestamp"]])
     log = log.groupby(["case:concept:name"]).agg({"business days until deadline": "last",
                                                  "year": "last"}).reset_index(drop=False)
-    plt.figure(figsize=(16, 4))
-    sns.histplot(data=log, x="business days until deadline", hue="year", kde=False)
+    print(log.groupby("year")["business days until deadline"].value_counts())
+    plt.figure(figsize=(16, 6))
+    ax = sns.histplot(data=log, x="business days until deadline", hue="year", kde=False)
+    ax.set(xlabel="business days until deadline", ylabel="count")
     plt.title("Last 'begin payment' of compliant cases")
+    plt.tight_layout()
     plt.savefig(os.path.join(bpi_dict["res_path"], "last_begin_payment.png"), dpi=500)
