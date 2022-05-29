@@ -11,7 +11,11 @@ sys.path.append('..')
 from src.preprocessing.utils import get_remaining_bus_days, get_event_nr
 from src.models.bucketing import StateBucketing
 from config.data_config import bpic_2019_dict as bpi_dict
-
+plt.rcParams.update({
+    "text.usetex": True,
+    "font.family": "serif",
+    "font.serif": ["Times"],
+})
 desired_width = 200
 pd.set_option('display.width', desired_width)
 pd.set_option("display.max_rows", 40)
@@ -47,7 +51,15 @@ if __name__ == "__main__":
     print(stats.percentileofscore(log_res[log_res.state == "Clear Invoice"]["remaining bus. hours / 24"], 1/24))
     print(stats.percentileofscore(log_res[log_res.state == "Clear Invoice"]["remaining bus. hours / 24"], 0))
     plt.figure(figsize=(16, 6))
-    sns.set_theme(style="whitegrid")
-    sns.boxplot(x="state", y="remaining bus. hours / 24", data=log_res)
+    ax = sns.boxplot(x="state", y="remaining bus. hours / 24", data=log_res)
+    plt.rcParams.update({
+        "axes.axisbelow":True,
+        "text.usetex": True,
+        "font.family": "serif",
+        "font.serif": ["Times"]})
+    ax.yaxis.grid(visible=True)
+    ax.set_xlabel("state", fontsize=20)
+    ax.set_ylabel("remaining business days", fontsize=20)
+    ax.tick_params(labelsize=14)
     plt.tight_layout()
     plt.savefig(os.path.join(res_path, "rem_time.png"), dpi=500)

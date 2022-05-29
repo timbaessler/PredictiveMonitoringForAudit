@@ -47,6 +47,7 @@ if __name__ == "__main__":
             cv_res = cv_res.append(cv_respr)
         cv_res = str(cv_res.params.value_counts().reset_index(drop=False).values[0,0])
         best_params = ast.literal_eval(cv_res)
+
         classifier = classifier + "_global_cv"
         for pr in range(50):
             print(pr)
