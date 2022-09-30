@@ -2,7 +2,7 @@
 
 Repository contains the source code for the research paper [Three Lines 4.0 - Predictive Process Monitoring for Internal Audit](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4080238) by Tim Bäßler and Marc Eulerich.
 
-Abstract:
+**Abstract:**
 Research in predictive process monitoring exists mainly from the perspective of process and risk
 owners. Moreover, existing guidelines from the Institute of Internal Auditors (IIA) omit process
 mining and/or process predictions for internal audit. Attempting to bridge this gap, we implement
