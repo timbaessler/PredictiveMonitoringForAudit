@@ -1,5 +1,8 @@
 # Three Lines 4.0 - Predictive Process Monitoring for Internal Audit
 
+Repository contains the source code for the research paper [Three Lines 4.0 - Predictive Process Monitoring for Internal Audit](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4080238)
+
+Abstract:
 Research in predictive process monitoring exists mainly from the perspective of process and risk
 owners. Moreover, existing guidelines from the Institute of Internal Auditors (IIA) omit process
 mining and/or process predictions for internal audit. Attempting to bridge this gap, we implement
@@ -13,3 +16,4 @@ use case, payment punctuality, with a publicly available event log, we show that
 use process predictions to provide assurance, reduce risk and prevent undesired outcomes.
 
 ![bucketing](https://user-images.githubusercontent.com/94218704/193218309-32968afe-1775-400e-a5e3-ce54d9f985d7.png)
+
