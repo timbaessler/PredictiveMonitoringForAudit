@@ -4,9 +4,7 @@ import numpy as np
 
 
 class Aggregation(TransformerMixin):
-    def __init__(self, num_cols,  static_cat_cols, dynamic_cat_cols, one_hot_static=True,
-                 case_id_col="case:concept:name", activity_col="concept:name",
-                 timestamp_col="time:timestamp"):
+    def __init__(self, num_cols,  static_cat_cols, dynamic_cat_cols, case_id_col, activity_col, timestamp_col, one_hot_static=False):
 
         self.num_cols = num_cols
         self.static_cat_cols = static_cat_cols
@@ -21,6 +19,7 @@ class Aggregation(TransformerMixin):
 
     def transform(self, X):
         X[self.num_cols] = X[self.num_cols].fillna(0)
+        X[self.static_cat_cols] = X[self.static_cat_cols].astype("category")
         X_num = X.groupby(self.id)[self.num_cols].agg(
             {np.mean,np.max,np.min,np.sum,np.std}).fillna(0)
         self.X_num_cols = X_num.columns.tolist()
@@ -29,7 +28,6 @@ class Aggregation(TransformerMixin):
                                               dummy_na=True)], axis=1)
         X_cat_dyn = X_cat_dyn.groupby(self.id).agg(np.sum)
         self.X_cat_dyn_cols = X_cat_dyn.columns.tolist()
-
         if self.one_hot_static:
             X_cat_stat = pd.concat([X[self.id],
                                     pd.get_dummies(X[self.static_cat_cols],
