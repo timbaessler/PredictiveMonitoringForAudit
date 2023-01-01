@@ -24,7 +24,7 @@ class CrossValidation:
                                    scoring='roc_auc',
                                    refit=True,
                                    n_jobs=-1,
-                                   enable_categorical=self.categorical
+                                   enable_categorical=self.categorical,
                                    cv=self.cvs,
                                    verbose=10)
             else:
