@@ -25,7 +25,6 @@ class CrossValidation:
                                    scoring='roc_auc',
                                    refit=True,
                                    n_jobs=-1,
-                                   
                                    cv=self.cvs,
                                    verbose=10)
             else:
