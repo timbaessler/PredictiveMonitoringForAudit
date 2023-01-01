@@ -1,4 +1,4 @@
-# Predictive Monitoring Payment Punctuality in Auditing Accounts Payable
+# Predictive Process Monitoring of Payment Punctuality in Auditing Accounts Payable
 
 Repository contains the source code for the research paper [Three Lines 4.0 - Predictive Process Monitoring for Internal Audit](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4080238) by Tim Bäßler and Marc Eulerich.
 
