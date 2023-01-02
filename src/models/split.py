@@ -4,7 +4,6 @@ def temporal_train_split(X, test_size,
                          return_cases=True,
                          case_id_col='case:concept:name',
                          timestamp_col='time:timestamp'):
-    X = X[X.event_nr <= X.pos]
     X["case_end"] = X.groupby(case_id_col)[timestamp_col].transform("last")
     case_ends = X.groupby(case_id_col)["case_end"].last().reset_index().sort_values(by=["case_end"])
     del X
