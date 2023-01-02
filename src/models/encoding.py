@@ -26,19 +26,31 @@ class Aggregation(TransformerMixin):
         X_cat_dyn = pd.concat([X[self.id],
                                pd.get_dummies(X[self.dynamic_cat_cols],
                                               dummy_na=True)], axis=1)
+        
+        
+        
         X_cat_dyn = X_cat_dyn.groupby(self.id).agg(np.sum)
+        
+        X3 = X.copy()
+        X3["pos"] = 1
+        X3["pos"] =X3.groupby("CaseID")["pos"].transform("cumsum")
+        X3 = X3.set_index(["CaseID", "Eventtime", "Activity"])[["pos", "time_since_first_event"]].unstack(level=2)
+        X3 = X3.groupby("CaseID")[X3.columns].first()
+        
         self.X_cat_dyn_cols = X_cat_dyn.columns.tolist()
         if self.one_hot_static:
             X_cat_stat = pd.concat([X[self.id],
                                     pd.get_dummies(X[self.static_cat_cols],
                                                    dummy_na=True)], axis=1)
+            
             X_cat_stat = X_cat_stat.groupby(self.id).first()
         else:
             X_cat_stat = X.groupby(self.id)[self.static_cat_cols].first()
         self.X_cat_stat_cols = X_cat_stat.columns.tolist()
         y = X.groupby(self.id)['y'].first()
-        X = X_num.join(X_cat_dyn).join(X_cat_stat)
-        del X_cat_dyn, X_num
+        X = X_num.join(X_cat_dyn).join(X_cat_stat).join(X3)
+        del X_cat_dyn, X_num, X3
         self.cat_indeces = list([i for i in range(len(X.columns)-len(self.static_cat_cols), len(X.columns))])
         self.X_cols = X.columns.tolist()
         return X, y
+
