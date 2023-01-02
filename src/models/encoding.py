@@ -36,7 +36,7 @@ class Aggregation(TransformerMixin):
         X3["pos"] =X3.groupby("CaseID")["pos"].transform("cumsum")
         X3 = X3.set_index(["CaseID", "Eventtime", "Activity"])[["pos", "time_since_first_event"]].unstack(level=2)
         X3 = X3.groupby("CaseID")[X3.columns].first()
-        
+        X3.columns = ['_'.join(col) for col in X3.columns.values]
         self.X_cat_dyn_cols = X_cat_dyn.columns.tolist()
         if self.one_hot_static:
             X_cat_stat = pd.concat([X[self.id],
@@ -49,6 +49,7 @@ class Aggregation(TransformerMixin):
         self.X_cat_stat_cols = X_cat_stat.columns.tolist()
         y = X.groupby(self.id)['y'].first()
         X = X_num.join(X_cat_dyn).join(X_cat_stat).join(X3)
+        self.cat_cols = X_cat_dyn.columns.tolist() + X_cat_stat.columns.tolist() + X3.columns.tolist()
         del X_cat_dyn, X_num, X3
         self.cat_indeces = list([i for i in range(len(X.columns)-len(self.static_cat_cols), len(X.columns))])
         self.X_cols = X.columns.tolist()
