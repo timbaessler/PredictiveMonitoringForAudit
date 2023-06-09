@@ -43,7 +43,7 @@ num_cols = list(['case:penalty_amount0', 'month', 'weekday', 'hour', 'time_since
 agg_transformer = Aggregation(num_cols, static_cat_cols, dynamic_cat_cols)
 X, y = agg_transformer.fit_transform(df)
 
-# Fit Clasifier
+# Fit Classifier
 clf = xgboost.XGBClassifier()
 clf.fit(X, y)
 ```
