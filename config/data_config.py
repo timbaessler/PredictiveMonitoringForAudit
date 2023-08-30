@@ -2,9 +2,9 @@ import os
 from sys import platform
 
 if platform == "linux":
-    path = '/content/drive/MyDrive/PrPM4CA/notebooks/three-lines-predictive-process-mining'
+    path = '/content/drive/MyDrive/Github/PredictiveMonitoringForAudit'
 elif platform == "win32":
-    path = r'G:\Meine Ablage\PrPM4CA\notebooks\three-lines-predictive-process-mining'
+    path = r'G:\Meine Ablage\Github\PredictiveMonitoringForAudit'
 else:
     raise RuntimeError
 

@@ -35,7 +35,7 @@ if __name__ == "__main__":
     dynamic_cat_cols = bpi_dict["dynamic_cat_cols"]
     num_cols = bpi_dict["num_cols"]
     res = pd.DataFrame()
-    for classifier in list(["XGBoost"]):
+    for classifier in list(["XGBoost", "RandomForest", "NeuralNetwork", "SVM"]):
         for pr in range(50):
             fname = os.path.join(predict_path, classifier +str(pr).zfill(2)+ "_")
             if os.path.exists(fname + ".sav"):

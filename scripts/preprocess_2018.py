@@ -4,6 +4,8 @@ import warnings
 import pandas as pd
 warnings.filterwarnings('ignore')
 sys.path.append('..')
+import gzip
+import shutil
 from src.preprocessing.utils import *
 from config.data_config import bpic_2018_dict as bpi_dict
 
@@ -43,6 +45,9 @@ def check_late_payment(log, case_id_col="case:concept:name", event_col="concept:
 if __name__ == "__main__":
     bpi_path = bpi_dict["bpi_path"]
     processed_path = bpi_dict["processed_path"]
+    with gzip.open(os.path.join(bpi_path, "raw",  "BPI Challenge 2018.xes.gz"), "rb") as f_in, \
+            open(os.path.join(bpi_path, "raw",  "BPI Challenge 2018.xes"), "wb") as f_out:
+        shutil.copyfileobj(f_in, f_out)
     if os.path.exists(os.path.join(bpi_path, "raw", "bpi.feather")):
         log = pd.read_feather(os.path.join(bpi_path, "raw", "bpi.feather"))
     else:
@@ -66,5 +71,4 @@ if __name__ == "__main__":
             pd.to_datetime("2015-12-23"),
             pd.to_datetime("2016-12-23"),
             pd.to_datetime("2017-12-22")]}), on=["year"], how="left")
-    print(log)
     log.to_feather(os.path.join(processed_path, 'bpic2018_labelled.feather'))
