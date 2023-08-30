@@ -35,16 +35,19 @@ if __name__ == "__main__":
     dynamic_cat_cols = bpi_dict["dynamic_cat_cols"]
     num_cols = bpi_dict["num_cols"]
     res = pd.DataFrame()
-    for classifier in list(["XGBoost", "RandomForest", "NeuralNetwork", "SVM"]):
+    for classifier in list(["MLP", "SVM", "XGBoost", "RandomForest"]):
         for pr in range(50):
             fname = os.path.join(predict_path, classifier +str(pr).zfill(2)+ "_")
             if os.path.exists(fname + ".sav"):
                 continue
             bucketer = TimeBucketing(offset=pr, deadline_col="deadline")
             log2 = bucketer.fit_transform(log)
-            agg_transformer = Aggregation(num_cols,
-                                          static_cat_cols,
-                                          dynamic_cat_cols,
+            agg_transformer = Aggregation(case_id_col='case:concept:name',
+                                          activity_col="concept:name",
+                                          timestamp_col='time:timestamp',
+                                          num_cols=num_cols,
+                                          static_cat_cols=static_cat_cols,
+                                          dynamic_cat_cols=dynamic_cat_cols,
                                           one_hot_static=True)
             # Create CV Set
             X, y = agg_transformer.fit_transform(log2)

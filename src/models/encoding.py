@@ -10,9 +10,9 @@ class Aggregation(TransformerMixin):
         self.static_cat_cols = static_cat_cols
         self.dynamic_cat_cols = dynamic_cat_cols
         self.one_hot_static = one_hot_static
-        self.id = case_id_col
-        self.trace = activity_col
-        self.timestamp_col = timestamp_col
+        self.caseid = case_id_col
+        self.activity = activity_col
+        self.timecol = timestamp_col
 
     def fit(self, X, y=None):
         return self
@@ -20,34 +20,34 @@ class Aggregation(TransformerMixin):
     def transform(self, X):
         X[self.num_cols] = X[self.num_cols].fillna(0)
         X[self.static_cat_cols] = X[self.static_cat_cols].astype("category")
-        X_num = X.groupby(self.id)[self.num_cols].agg(
+        X_num = X.groupby(self.caseid)[self.num_cols].agg(
             {np.mean,np.max,np.min,np.sum,np.std}).fillna(0)
         self.X_num_cols = X_num.columns.tolist()
-        X_cat_dyn = pd.concat([X[self.id],
+        X_cat_dyn = pd.concat([X[self.caseid],
                                pd.get_dummies(X[self.dynamic_cat_cols],
                                               dummy_na=True)], axis=1)
         
         
         
-        X_cat_dyn = X_cat_dyn.groupby(self.id).agg(np.sum)
+        X_cat_dyn = X_cat_dyn.groupby(self.caseid).agg(np.sum)
         
         X3 = X.copy()
         X3["pos"] = 1
-        X3["pos"] =X3.groupby("CaseID")["pos"].transform("cumsum")
-        X3 = X3.set_index(["CaseID", "Eventtime", "Activity"])[["pos", "time_since_first_event"]].unstack(level=2)
-        X3 = X3.groupby("CaseID")[X3.columns].first()
+        X3["pos"] =X3.groupby(self.caseid)["pos"].transform("cumsum")
+        X3 = X3.set_index([self.caseid, self.timecol, self.activity])[["pos", "time_since_first_event"]].unstack(level=2)
+        X3 = X3.groupby(self.caseid)[X3.columns].first()
         X3.columns = ['_'.join(col) for col in X3.columns.values]
         self.X_cat_dyn_cols = X_cat_dyn.columns.tolist()
         if self.one_hot_static:
-            X_cat_stat = pd.concat([X[self.id],
+            X_cat_stat = pd.concat([X[self.caseid],
                                     pd.get_dummies(X[self.static_cat_cols],
                                                    dummy_na=True)], axis=1)
             
-            X_cat_stat = X_cat_stat.groupby(self.id).first()
+            X_cat_stat = X_cat_stat.groupby(self.caseid).first()
         else:
-            X_cat_stat = X.groupby(self.id)[self.static_cat_cols].first()
+            X_cat_stat = X.groupby(self.caseid)[self.static_cat_cols].first()
         self.X_cat_stat_cols = X_cat_stat.columns.tolist()
-        y = X.groupby(self.id)['y'].first()
+        y = X.groupby(self.caseid)['y'].first()
         X = X_num.join(X_cat_dyn).join(X_cat_stat).join(X3)
         self.cat_cols = X_cat_dyn.columns.tolist() + X_cat_stat.columns.tolist() + X3.columns.tolist()
         del X_cat_dyn, X_num, X3

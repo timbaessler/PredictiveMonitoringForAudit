@@ -53,6 +53,7 @@ if __name__ == "__main__":
     else:
         log = read_xes(os.path.join(bpi_path, "raw",  "BPI Challenge 2018.xes"))
         log.to_feather(os.path.join(bpi_path, "raw", "bpi.feather"))
+    print(log)
     log = log[log.doctype=="Payment application"]
     log = get_time_attributes(log)
     log["case:concept:name"] = log["case:concept:name"] + log["case:year"].astype(str)
