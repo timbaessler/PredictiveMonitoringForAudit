@@ -15,7 +15,8 @@ desktop.ini
 *.ipynb
 test*.py
 archive/
-
+predictions/
+results/
 
 # Distribution / packaging
 .Python
@@ -31,6 +32,7 @@ parts/
 sdist/
 var/
 wheels/
+
 pip-wheel-metadata/
 share/python-wheels/
 *.egg-info/
