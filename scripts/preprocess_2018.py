@@ -53,11 +53,11 @@ if __name__ == "__main__":
     else:
         log = read_xes(os.path.join(bpi_path, "raw",  "BPI Challenge 2018.xes"))
         log.to_feather(os.path.join(bpi_path, "raw", "bpi.feather"))
-    print(log)
     log = log[log.doctype=="Payment application"]
     log = get_time_attributes(log)
     log["case:concept:name"] = log["case:concept:name"] + log["case:year"].astype(str)
     log["case:year"] = log["case:year"].astype(int)
+    log["case:penalty_amount0"] = log["case:year"].astype(float)
     log = log[log.year == log["case:year"]]
     log = get_time_since_last_event(log)
     log = get_time_since_first_event(log)
@@ -73,3 +73,4 @@ if __name__ == "__main__":
             pd.to_datetime("2016-12-23"),
             pd.to_datetime("2017-12-22")]}), on=["year"], how="left")
     log.to_feather(os.path.join(processed_path, 'bpic2018_labelled.feather'))
+    log.to_csv(os.path.join(processed_path, 'bpic2018_labelled.csv'), sep=";")

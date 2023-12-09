@@ -35,8 +35,8 @@ if __name__ == "__main__":
     "text.usetex": True,
     "font.family": "serif",
     "font.serif": ["Times"]})
-    ax.set_xlabel("business days until deadline", fontsize=20)
-    ax.set_ylabel("count of cases", fontsize=20)
+    ax.set_xlabel("Business days until deadline", fontsize=20)
+    ax.set_ylabel("Count of cases", fontsize=20)
     plt.title("Last 'begin payment' of compliant cases", fontsize=20)
     plt.tight_layout()
     plt.savefig(os.path.join(bpi_dict["res_path"], "last_begin_payment.png"), dpi=500)

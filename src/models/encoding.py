@@ -1,7 +1,7 @@
 import pandas as pd
 from sklearn.base import TransformerMixin
 import numpy as np
-
+import sys
 
 class Aggregation(TransformerMixin):
     def __init__(self, num_cols,  static_cat_cols, dynamic_cat_cols, case_id_col, activity_col, timestamp_col, one_hot_static=False):
@@ -19,39 +19,29 @@ class Aggregation(TransformerMixin):
 
     def transform(self, X):
         X[self.num_cols] = X[self.num_cols].fillna(0)
-        X[self.static_cat_cols] = X[self.static_cat_cols].astype("category")
+        X[self.static_cat_cols] = X[self.static_cat_cols].astype('category').apply(lambda x: x.cat.codes).astype('category')
         X_num = X.groupby(self.caseid)[self.num_cols].agg(
-            {np.mean,np.max,np.min,np.sum,np.std}).fillna(0)
+            [np.mean,np.max,np.min,np.sum,np.std]).fillna(0)
         self.X_num_cols = X_num.columns.tolist()
         X_cat_dyn = pd.concat([X[self.caseid],
                                pd.get_dummies(X[self.dynamic_cat_cols],
                                               dummy_na=True)], axis=1)
-        
-        
-        
         X_cat_dyn = X_cat_dyn.groupby(self.caseid).agg(np.sum)
-        
-        X3 = X.copy()
-        X3["pos"] = 1
-        X3["pos"] =X3.groupby(self.caseid)["pos"].transform("cumsum")
-        X3 = X3.set_index([self.caseid, self.timecol, self.activity])[["pos", "time_since_first_event"]].unstack(level=2)
-        X3 = X3.groupby(self.caseid)[X3.columns].first()
-        X3.columns = ['_'.join(col) for col in X3.columns.values]
         self.X_cat_dyn_cols = X_cat_dyn.columns.tolist()
         if self.one_hot_static:
             X_cat_stat = pd.concat([X[self.caseid],
                                     pd.get_dummies(X[self.static_cat_cols],
                                                    dummy_na=True)], axis=1)
-            
             X_cat_stat = X_cat_stat.groupby(self.caseid).first()
         else:
-            X_cat_stat = X.groupby(self.caseid)[self.static_cat_cols].first()
+            X_cat_stat = X.groupby(self.caseid)[self.static_cat_cols].first().astype('category')
         self.X_cat_stat_cols = X_cat_stat.columns.tolist()
         y = X.groupby(self.caseid)['y'].first()
-        X = X_num.join(X_cat_dyn).join(X_cat_stat).join(X3)
-        self.cat_cols = X_cat_dyn.columns.tolist() + X_cat_stat.columns.tolist() + X3.columns.tolist()
-        del X_cat_dyn, X_num, X3
+        X_num.columns = ['_'.join(col) if type(col) is tuple else col for col in X_num.columns.values]
+        X_num_cols = X_num.columns
+        X = X_num.join(X_cat_dyn).join(X_cat_stat)
+        del X_cat_dyn, X_num
+        X.columns = ['_'.join(col) if type(col) is tuple else col for col in X.columns.values]
         self.cat_indeces = list([i for i in range(len(X.columns)-len(self.static_cat_cols), len(X.columns))])
         self.X_cols = X.columns.tolist()
-        return X, y
-
+        return X, y, X_num_cols
