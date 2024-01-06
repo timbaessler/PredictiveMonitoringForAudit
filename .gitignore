@@ -17,6 +17,7 @@ test*.py
 archive/
 predictions/
 results/
+*.csv
 
 # Distribution / packaging
 .Python
