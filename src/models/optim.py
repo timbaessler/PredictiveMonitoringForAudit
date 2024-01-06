@@ -29,23 +29,18 @@ class ThreshholdOptimizer:
         self.theta = self.thresh[self.min_pos]
 
     def plot_threshold(self):
-        fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(16, 4))
+        fig, (ax2, ax3) = plt.subplots(1, 2, figsize=(10, 5))
         auc = str(round(metrics.auc(self.specificity, self.recall), 2))
         opt_prec, opt_rec = self.precision[self.min_pos], self.recall[self.min_pos]
-        plt.suptitle('AUC='+auc+' rec=' +str(round(opt_rec*100,2))+' prec='+str(round(opt_prec*100, 2)))
-        ax1.plot(1-self.specificity, self.recall, linewidth=2)
-        ax1.set_xlabel('False positive rate [FP/N]')
-        ax1.set_ylabel('Recall [TP/P]')
-        ax1.set_title('ROC Curve')
-        ax2.plot(self.recall, self.precision, linewidth=2)
+        ax2.plot(self.recall, self.precision, linewidth=2, color='#4C72B0')
         ax2.set_xlabel('Recall [TP/P = TP/(TP+FN)]')
         ax2.set_ylabel('Precision [TP/(TP+FP)]')
-        ax2.axvline(x=opt_rec, linestyle='dashed', color='red', label="optimized threshhold")
-        ax2.axhline(y=opt_prec, linestyle='dashed', color='red')
-        ax2.axvline(x=self.recall[501], linestyle='dashed', color='black', label="threshhold")
+        ax2.axvline(x=opt_rec, linestyle='dashed', color='#C44E52', label="optimized threshold")
+        ax2.axhline(y=opt_prec, linestyle='dashed', color='#C44E52')
+        ax2.axvline(x=self.recall[501], linestyle='dashed', color='black', label="baseline")
         ax2.axhline(y=self.precision[501], linestyle='dashed', color='black')
         ax2.set_title('Recall-Precision Curve')
-        ax3.plot(self.thresh, self.risk, linewidth=2)
+        ax3.plot(self.thresh, self.risk, linewidth=2, color='#4C72B0')
         ax3.set_title('Risk Minimization')
         ax3.set_xlim(-0.1, 1.1)
         try:
@@ -53,13 +48,12 @@ class ThreshholdOptimizer:
             ax3.set_ylim(self.risk[self.min_pos]-20, ymax+100)
         except:
             pass
-        ax3.axvline(x=self.theta, linestyle='dashed', color='red', label="optimized threshhold")
-        ax3.axvline(x=0.5, linestyle='dashed', color='black', label="threshhold")
+        ax3.axvline(x=self.theta, linestyle='dashed', color='#C44E52', label="optimized threshhold")
+        ax3.axvline(x=0.5, linestyle='dashed', color='black', label="baseline")
         ax3.set_xlabel('Treshhold')
         ax3.set_ylabel('Risk')
         ax2.legend()
         ax3.legend()
-        ax1.grid()
         ax2.grid()
         ax3.grid()
         return fig
