@@ -36,7 +36,7 @@ class Aggregation(TransformerMixin):
         else:
             X_cat_stat = X.groupby(self.caseid)[self.static_cat_cols].first().astype('category')
         self.X_cat_stat_cols = X_cat_stat.columns.tolist()
-        y = X.groupby(self.caseid)['y'].first()
+        y = X.groupby(self.caseid)['y'].last()
         X_num.columns = ['_'.join(col) if type(col) is tuple else col for col in X_num.columns.values]
         X_num_cols = X_num.columns
         X = X_num.join(X_cat_dyn).join(X_cat_stat)

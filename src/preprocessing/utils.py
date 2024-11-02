@@ -45,7 +45,7 @@ def get_time_since_first_event(log: pd.DataFrame, case_id_col='case:concept:name
     log[timestamp_col] = log[timestamp_col].dt.tz_localize(None)
     if not 'time_since_last_event' in log.columns.tolist():
         log = get_time_since_last_event(log)
-    log["time_since_first_event"] =log.groupby(case_id_col)["time_since_last_event"].apply(lambda x: x.cumsum())
+    log["time_since_first_event"] =log.groupby(case_id_col)["time_since_last_event"].apply(lambda x: x.cumsum()).reset_index(level=0, drop=True)
     return log
 
 
