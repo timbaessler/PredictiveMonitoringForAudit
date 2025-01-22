@@ -1,8 +1,3 @@
-
-## Workflow
-We propose to use remaining-time bucketing of the traces. We expect that the point of time of the outcome is exactly known (e.g., term of payment, date of delivery). Here one would predict, if the case reaches a time-threshold with only a certain amount of time left. During runtime, an ongoing partial trace is used for predictions if it matches the chosen remaining time bucket (e.g., 7 days). If the trace is predicted to have a positive label (i.e., an undesired outcome) then the respective department will get notified (via for example E-mail). This approach does not require judgement of the auditor, and therefore an automated message via E-Mail or directly in the ERP system could be implemented.
-![workflow](https://github.com/timbaessler/PredictiveMonitoringForAudit/assets/94218704/7e202889-1891-4957-be41-236ee56decfa)
-
 ## Preprocessing
 
 ```python
