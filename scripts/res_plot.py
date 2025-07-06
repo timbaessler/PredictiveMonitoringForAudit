@@ -60,5 +60,5 @@ if __name__ == "__main__":
     classifiers = df.Classifier.unique().tolist()
     df = df.pivot(index="timediff", columns="Classifier", values="AUC")
     results = autorank(df)
-    plot_stats(results)
-    plt.show()
+    #plot_stats(results)
+    #plt.show()
