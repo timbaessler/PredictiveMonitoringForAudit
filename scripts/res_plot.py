@@ -25,7 +25,30 @@ if __name__ == "__main__":
     df.to_excel(os.path.join(predict_path, "res_df_all.xlsx"), index=False)
     # Results Plot
     plt.figure(figsize=(10, 5))
-    sns.lineplot(data=df, x="timediff", y="AUC", hue="Classifier", marker='o', markersize=8, linewidth=2)
+    linestyles = {
+        "LogisticRegression": (0, (1, 5)),  # dotted
+        "RandomForest": (0, (5, 5)),        # dashed
+        "TabNet": (0, (3, 1, 1, 1)),        # dash-dot
+        "XGBoost": "solid"                 # solid
+    }
+    
+    markers = {
+        "LogisticRegression": "o",
+        "RandomForest": "s",
+        "TabNet": "^",
+        "XGBoost": "D"
+    }
+    
+    # Plot each classifier manually with distinct styles
+    for clf in df["Classifier"].unique():
+        df_clf = df[df["Classifier"] == clf]
+        sns.lineplot(
+            data=df_clf, x="timediff", y="AUC", label=clf, ax=axlist[i],
+            linestyle=linestyles[clf],
+            marker=markers[clf],
+            linewidth=2,
+            markersize=8
+        )    
     plt.grid(True, linestyle='--', alpha=0.7)
     plt.xlabel("Business days until deadline")
     plt.ylabel("AUC")
