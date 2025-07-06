@@ -8,10 +8,11 @@ import matplotlib.pyplot as plt
 from autorank import autorank, create_report, plot_stats, latex_table
 
 
-plt.rcParams.update({'text.usetex':True,
-                     'font.size':11,
-                     'font.family':'serif'
-                     })
+plt.rcParams.update({
+    'text.usetex': False,  # Disable LaTeX to use system-installed fonts
+    'font.size': 14,
+    'font.family': 'Times New Roman'  # Ensure this font is installed on your system
+})
 
 
 
