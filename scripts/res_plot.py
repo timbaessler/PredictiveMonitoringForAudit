@@ -41,15 +41,16 @@ if __name__ == "__main__":
     }
     
     # Plot each classifier manually with distinct styles
+    fig, ax = plt.subplots(figsize=(10, 5))
     for clf in df["Classifier"].unique():
         df_clf = df[df["Classifier"] == clf]
         sns.lineplot(
-            data=df_clf, x="timediff", y="AUC", label=clf, ax=axlist[i],
+            data=df_clf, x="timediff", y="AUC", label=clf, ax=ax,
             linestyle=linestyles[clf],
             marker=markers[clf],
             linewidth=2,
             markersize=8
-        )    
+        )
     plt.grid(True, linestyle='--', alpha=0.7)
     plt.xlabel("Business days until deadline")
     plt.ylabel("AUC")
@@ -60,5 +61,5 @@ if __name__ == "__main__":
     classifiers = df.Classifier.unique().tolist()
     df = df.pivot(index="timediff", columns="Classifier", values="AUC")
     results = autorank(df)
-    #plot_stats(results)
-    #plt.show()
+    plot_stats(results)
+    plt.show()
